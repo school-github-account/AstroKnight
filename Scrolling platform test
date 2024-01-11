@@ -1,0 +1,205 @@
+package culminating;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class ScrollingPlatformer implements ActionListener {
+	
+	JFrame frame;
+	DrawingPanel panel;
+	
+	Timer timer;
+	int timeSpeed = 10;
+	
+	Player player;
+	
+	boolean up, left, right;
+	
+	
+	ArrayList<Rectangle> level = new ArrayList<Rectangle>();
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new ScrollingPlatformer();
+			}
+		});
+	}
+	
+	ScrollingPlatformer() {
+		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addKeyListener(new ArrowKeyListener());
+		frame.setResizable(false);
+		
+		panel = new DrawingPanel();
+		panel.setPreferredSize(new Dimension(640, 360));
+		panel.setBackground(Color.black);
+		
+		level.add(new Rectangle(0, 300, 400, 50));
+		level.add(new Rectangle(450, 250, 400, 50));
+		level.add(new Rectangle(100, 150, 70, 70));
+		level.add(new Rectangle(850, 100, 200, 50));
+		//length: 1050
+		
+		player = new Player(50, 200, 50, 50);
+		
+		timer = new Timer(timeSpeed, this);
+		
+		frame.setContentPane(panel);
+		frame.pack();
+		frame.setVisible(true);
+		
+		timer.start();
+		
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		player.move();
+		player.gravity();
+		player.jump();
+		panel.repaint();
+	}
+	
+private class Player extends Rectangle {
+		
+		double yy;
+		double vy;
+		double g = 0.1;
+		int reverseStep = 1;
+		
+		int globalX;
+		boolean scrolling = false;
+		
+		boolean canJump = true;
+		
+		Player(int x, int y, int width, int height) {
+			super(x, y, width, height);
+			globalX = this.x;
+			vy = 0.0;
+			yy = (int)y;
+		}
+		
+		void move() {
+			if (left) {
+				globalX -= 3;
+				if (scrolling) for (Rectangle r: level) r.x += 3;
+				else this.x -= 3;
+				
+				if (checkCollision()) {
+					globalX += 3;
+					if (scrolling) for (Rectangle r: level) r.x -= 3;
+					else this.x += 3;
+				}
+			}
+			if (right) {
+				globalX += 3;
+				if (scrolling) for (Rectangle r: level) r.x -= 3;
+				else this.x += 3;
+				
+				if (checkCollision()) {
+					globalX -= 3;
+					if (scrolling) for (Rectangle r: level) r.x += 3;
+					else this.x -= 3;
+				}
+			}
+			
+			if (globalX > 200 && globalX + 440 < 1050) scrolling = true;
+			else scrolling = false;
+		}
+		
+		boolean checkCollision() {
+			for (Rectangle r: level) {
+				if (this.intersects(r)) return true;
+			}
+			return false;
+		}
+		
+		void gravity() {
+			
+			this.y++;
+			
+			if (checkCollision()) {
+				if (vy < 0.0) reverseStep = 1;
+				else reverseStep = -1;
+				
+				
+				while (checkCollision()) {
+					this.y += reverseStep;
+					
+					//this.y--;
+					yy = (double)this.y;
+				}
+				
+				yy = (double)this.y;
+				vy = 0.0;
+				canJump = true;
+			}
+			
+			else {
+				vy += g;
+			}
+			this.y--;
+			yy += (vy*2);
+			this.y = (int)yy;
+		}
+		
+		void jump() {
+			this.y++;	
+			if (up && checkCollision() && canJump) {
+				this.y--;
+				vy = -4;
+				canJump = false;
+			}
+			this.y--;
+			
+//			if (up) {
+//				this.y++;
+//				if (checkCollision()) {
+//					vy = -4;
+//				}
+//				this.y--;
+//				
+//			}
+		}
+		
+//		
+		
+	}
+	
+	private class DrawingPanel extends JPanel {
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			g2.setColor(Color.white);
+			for (Rectangle r: level) g2.fillRect(r.x, r.y, r.width, r.height); 
+			
+			g2.fillOval(player.x, player.y, player.width, player.height);
+			
+			g2.drawString(String.valueOf(player.globalX), 50, 50);
+		}
+	}
+	
+	public class ArrowKeyListener extends KeyAdapter {
+		
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) left = false;
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) right = false;
+			if (e.getKeyCode() == KeyEvent.VK_UP) up = false;
+		}
+		
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) left = true;
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) right = true;
+			if (e.getKeyCode() == KeyEvent.VK_UP) up = true;
+		}
+	}
+
+}
