@@ -1,0 +1,22 @@
+package culminating;
+
+import java.util.ArrayList;
+import java.awt.*;
+
+public class Level {
+	
+	private ArrayList<Rectangle> platformList;
+	
+	Level() {
+		platformList = new ArrayList<Rectangle>();
+	}
+	
+	public void addPlatform(int x, int y, int w, int h) {
+		this.platformList.add(new Rectangle(x, y, w, h));
+	}
+	
+	public ArrayList<Rectangle> getList() {
+		return this.platformList;
+	}
+
+}
