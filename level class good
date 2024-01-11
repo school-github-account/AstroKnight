@@ -1,0 +1,64 @@
+package culminating;
+
+import java.util.ArrayList;
+import java.awt.*;
+
+public class Level {
+	
+	private ArrayList<Rectangle> platformList;
+	private ArrayList<Rectangle> hazardList;
+	
+	Level() {
+		platformList = new ArrayList<Rectangle>();
+		hazardList = new ArrayList<Rectangle>();
+	}
+	
+	public void addPlatform(int x, int y, int w, int h) {
+		this.platformList.add(new Rectangle(x, y, w, h));
+	}
+	
+	public void addHazard(int x, int y, int w, int h) {
+		this.hazardList.add(new Rectangle(x, y, w, h));
+	}
+	
+	public ArrayList<Rectangle> getPlatforms() {
+		return this.platformList;
+	}
+	
+	public ArrayList<Rectangle> getHazards() {
+		return this.hazardList;
+	}
+
+}
+package culminating;
+
+import java.util.ArrayList;
+import java.awt.*;
+
+public class Level {
+	
+	private ArrayList<Rectangle> platformList;
+	private ArrayList<Rectangle> hazardList;
+	
+	Level() {
+		platformList = new ArrayList<Rectangle>();
+		hazardList = new ArrayList<Rectangle>();
+	}
+	
+	public void addPlatform(int x, int y, int w, int h) {
+		this.platformList.add(new Rectangle(x, y, w, h));
+	}
+	
+	public void addHazard(int x, int y, int w, int h) {
+		this.hazardList.add(new Rectangle(x, y, w, h));
+	}
+	
+	public ArrayList<Rectangle> getPlatforms() {
+		return this.platformList;
+	}
+	
+	public ArrayList<Rectangle> getHazards() {
+		return this.hazardList;
+	}
+
+}
